@@ -1,7 +1,7 @@
 # Проект «Киноман» [![Build status][travis-image]][travis-url]
 
 * Студент: [Павел Лотонин](https://up.htmlacademy.ru/ecmascript/13/user/917325).
-* Наставник: `Неизвестно`.
+* Наставник: [Александ Пасунько](https://htmlacademy.ru/profile/id702351).
 
 ---
 
