@@ -1,14 +1,14 @@
-import { createFilmCardTemplate } from "./film-card";
+import {createFilmCardTemplate} from "./film-card";
 
 const createCardsForRecommend = (count) => {
-  let result =``;
-  for(let x=0; x<count; x++) {
-    result +=createFilmCardTemplate();
+  let result = ``;
+  for (let x = 0; x < count; x++) {
+    result += createFilmCardTemplate();
   }
   return result;
 };
 
-export const createFilmRecommend = (count,title) => {
+export const createFilmRecommend = (count, title) => {
   return `<section class="films-list films-list--extra">
   <h2 class="films-list__title">${title}</h2>
 
