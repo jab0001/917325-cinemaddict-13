@@ -1,10 +1,21 @@
-export const createFilterTemplate = () => {
+import {firstLetterCaps} from '../utils';
+
+const createFilters = (filters) => {
+  let result = ``;
+  for (let x = 0; x < filters.length; x++) {
+    if (filters[x].name === `all`) {
+      result += `<a href="#${filters[x].name}" class="main-navigation__item">${firstLetterCaps(filters[x].name)} movies </a>`;
+    } else {
+      result += `<a href="#${filters[x].name}" class="main-navigation__item">${firstLetterCaps(filters[x].name)} <span class="main-navigation__item-count">${filters[x].count}</span></a>`;
+    }
+  }
+  return result;
+};
+
+export const createFilterTemplate = (filter) => {
   return `<nav class="main-navigation">
   <div class="main-navigation__items">
-    <a href="#all" class="main-navigation__item">All movies</a>
-    <a href="#watchlist" class="main-navigation__item">Watchlist <span class="main-navigation__item-count">13</span></a>
-    <a href="#history" class="main-navigation__item main-navigation__item--active">History <span class="main-navigation__item-count">4</span></a>
-    <a href="#favorites" class="main-navigation__item">Favorites <span class="main-navigation__item-count">8</span></a>
+    ${createFilters(filter)}
   </div>
   <a href="#stats" class="main-navigation__additional">Stats</a>
 </nav>`;
