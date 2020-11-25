@@ -9,7 +9,6 @@ import {createTotalFilmsTemplate} from "./view/total-films";
 import {generateFilmCard} from "./mock/card";
 import {generateFilter} from "./mock/filter-films";
 import {generateUserStats} from "./mock/user-stats";
-
 /* import {createPopupTemplate} from "./view/popup"; */
 import {createStatsTemplate} from "./view/stats";
 
