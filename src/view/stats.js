@@ -1,10 +1,12 @@
-export const createStatsTemplate = (rank) => {
-  const {totalWatched, totalTime, userRank} = rank;
+import {createElement} from "../utils";
+
+const createStatsTemplate = (rank) => {
+  const {totalWatched, totalTime, userRank, genre} = rank;
   return `<section class="statistic">
   <p class="statistic__rank">
     Your rank
     <img class="statistic__img" src="images/bitmap@2x.png" alt="Avatar" width="35" height="35">
-    <span class="statistic__rank-label">Sci-Fighter</span>
+    <span class="statistic__rank-label">${userRank}</span>
   </p>
 
   <form action="https://echo.htmlacademy.ru/" method="get" class="statistic__filters">
@@ -37,7 +39,7 @@ export const createStatsTemplate = (rank) => {
     </li>
     <li class="statistic__text-item">
       <h4 class="statistic__item-title">Top genre</h4>
-      <p class="statistic__item-text">${userRank}</p>
+      <p class="statistic__item-text">${genre}</p>
     </li>
   </ul>
 
@@ -47,3 +49,26 @@ export const createStatsTemplate = (rank) => {
 
 </section>`;
 };
+
+export default class Stats {
+  constructor(rank) {
+    this._element = null;
+    this._rank = rank;
+  }
+
+  getTemplate() {
+    return createStatsTemplate(this._rank);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

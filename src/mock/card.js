@@ -1,64 +1,31 @@
-import dayjs from 'dayjs';
-import {getRandomInteger} from '../utils';
+import dayjs from "dayjs";
+import {getRandomInteger} from "../utils";
 
-
-const state = {
-  filmName: [
-    `Made for each other`,
-    `Popeye meets Sinbad`,
-    `Sagebrush trail`,
-    `Santa claus conquers the martians`,
-    `The dance of life`,
-    `The great flamarion`,
-    `The man with the golden arm`,
-  ],
-  posters: [
-    `made-for-each-other.png`,
-    `popeye-meets-sinbad.png`,
-    `sagebrush-trail.jpg`,
-    `santa-claus-conquers-the-martians.jpg`,
-    `the-dance-of-life.jpg`,
-    `the-great-flamarion.jpg`,
-    `the-man-with-the-golden-arm.jpg`,
-  ],
-  genre: [
-    `action`,
-    `cartoon`,
-    `comedy`,
-    `horror`,
-  ],
-  ageLimit: [
-    `3+`,
-    `13+`,
-    `16+`,
-    `18+`,
-  ],
-  country: [
-    `Russia`,
-    `USA`,
-    `Germany`,
-    `Valhalla`,
-  ],
-  comments: {
-    emoji: [
-      `angry.png`,
-      `puke.png`,
-      `sleeping.png`,
-      `smile.png`,
-    ],
-    author: [
-      `Bill`,
-      `Maximilian`,
-      `Vladilen`,
-      `Lex`,
-    ],
-    text: [
-      `hello`,
-      `good`,
-      `bad`,
-      `good day`,
-    ],
-  }
+const FILM_NAMES = [
+  `Made for each other`,
+  `Popeye meets Sinbad`,
+  `Sagebrush trail`,
+  `Santa claus conquers the martians`,
+  `The dance of life`,
+  `The great flamarion`,
+  `The man with the golden arm`,
+];
+const POSTERS = [
+  `made-for-each-other.png`,
+  `popeye-meets-sinbad.png`,
+  `sagebrush-trail.jpg`,
+  `santa-claus-conquers-the-martians.jpg`,
+  `the-dance-of-life.jpg`,
+  `the-great-flamarion.jpg`,
+  `the-man-with-the-golden-arm.jpg`,
+];
+const GENRES = [`action`, `cartoon`, `comedy`, `horror`];
+const AGE_LIMITS = [`3+`, `13+`, `16+`, `18+`];
+const COUNTRYS = [`Russia`, `USA`, `Germany`, `Valhalla`];
+const COMMENTS = {
+  emoji: [`angry.png`, `puke.png`, `sleeping.png`, `smile.png`],
+  author: [`Bill`, `Maximilian`, `Vladilen`, `Lex`],
+  text: [`hello`, `good`, `bad`, `good day`],
 };
 
 const generateArray = (array) => {
@@ -69,7 +36,7 @@ const generateArray = (array) => {
     randomArray.push(array[randomComment]);
   }
 
-  let unique = [...new Set(randomArray)];
+  const unique = [...new Set(randomArray)];
   return unique;
 };
 
@@ -85,14 +52,13 @@ const generateDiscription = () => {
   return result;
 };
 
-
-const generateForCard = (array) => {
+const getRandomItem = (array) => {
   const randomIndex = getRandomInteger(0, array.length - 1);
 
   return array[randomIndex];
 };
 
-const generateYear = (day, month, year, format) => {
+const generateYear = (day, month, year) => {
   const maxDaysGap = day;
   const maxMonthGap = month;
   const maxYearsGap = year;
@@ -100,37 +66,34 @@ const generateYear = (day, month, year, format) => {
   const monthGap = getRandomInteger(-maxMonthGap, 1);
   const yearsGap = getRandomInteger(-maxYearsGap, 0);
 
-  return dayjs().add(daysGap, `day`).add(monthGap, `month`).add(yearsGap, `years`).format(format);
-};
-
-const generateDuration = () => {
-  const randomHours = getRandomInteger(0, 2);
-  const randomMin = getRandomInteger(0, 59);
-  return `${randomHours}h ${randomMin}m`;
+  return dayjs()
+    .add(daysGap, `day`)
+    .add(monthGap, `month`)
+    .add(yearsGap, `years`);
 };
 
 export const generateFilmCard = () => {
   return {
-    filmName: generateForCard(state.filmName),
-    poster: generateForCard(state.posters),
+    filmName: getRandomItem(FILM_NAMES),
+    poster: getRandomItem(POSTERS),
     description: generateDiscription(),
-    raiting: getRandomInteger(0, 5),
-    ageLimit: generateForCard(state.ageLimit),
-    year: generateYear(30, 12, 60, `DD MMMM YYYY`),
-    duration: generateDuration(),
-    director: generateForCard(state.comments.author),
-    writers: generateArray(state.comments.author),
-    actors: generateArray(state.comments.author),
-    country: generateForCard(state.country),
-    genre: generateArray(state.genre),
+    raiting: getRandomInteger(0, 8),
+    ageLimit: getRandomItem(AGE_LIMITS),
+    year: generateYear(30, 12, 60),
+    duration: getRandomInteger(0, 239),
+    director: getRandomItem(COMMENTS.author),
+    writers: generateArray(COMMENTS.author),
+    actors: generateArray(COMMENTS.author),
+    country: getRandomItem(COUNTRYS),
+    genre: generateArray(GENRES),
     watched: Boolean(getRandomInteger(0, 1)),
     watchList: Boolean(getRandomInteger(0, 1)),
     favorite: Boolean(getRandomInteger(0, 1)),
     comments: {
-      emoji: generateArray(state.comments.emoji),
+      emoji: generateArray(COMMENTS.emoji),
       commentDate: generateYear(30, 12, 5, `YYYY/MM/DD HH:MM`),
-      author: generateArray(state.comments.author),
-      text: generateArray(state.comments.text),
+      author: generateArray(COMMENTS.author),
+      text: generateArray(COMMENTS.text),
     },
   };
 };

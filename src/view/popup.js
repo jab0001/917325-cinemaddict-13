@@ -1,3 +1,6 @@
+import dayjs from "dayjs";
+import {createElement, resultHoursMins} from "../utils";
+
 const createGenres = (el) => {
   let result = ``;
   for (let x = 0; x < el.length; x++) {
@@ -28,7 +31,7 @@ const createComments = (author, comment, emoji, commentDate) => {
   return result;
 };
 
-export const createPopupTemplate = (filmCard) => {
+const createPopupTemplate = (filmCard) => {
   const {
     poster,
     filmName,
@@ -44,6 +47,7 @@ export const createPopupTemplate = (filmCard) => {
     actors,
     country
   } = filmCard;
+  const durations = resultHoursMins(duration);
 
   return `<section class="film-details">
   <form class="film-details__inner" action="" method="get">
@@ -85,11 +89,11 @@ export const createPopupTemplate = (filmCard) => {
             </tr>
             <tr class="film-details__row">
               <td class="film-details__term">Release Date</td>
-              <td class="film-details__cell">${year}</td>
+              <td class="film-details__cell">${dayjs(year).format(`DD MMMM YYYY`)}</td>
             </tr>
             <tr class="film-details__row">
               <td class="film-details__term">Runtime</td>
-              <td class="film-details__cell">${duration}</td>
+              <td class="film-details__cell">${durations[0]}h ${durations[1]}m</td>
             </tr>
             <tr class="film-details__row">
               <td class="film-details__term">Country</td>
@@ -162,3 +166,26 @@ export const createPopupTemplate = (filmCard) => {
   </form>
 </section>`;
 };
+
+export default class Popup {
+  constructor(filmCard) {
+    this._element = null;
+    this._filmCard = filmCard;
+  }
+
+  getTemplate() {
+    return createPopupTemplate(this._filmCard);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

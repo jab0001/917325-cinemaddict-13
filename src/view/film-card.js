@@ -1,12 +1,14 @@
-export const createFilmCardTemplate = (filmCard) => {
+import {createElement, resultHoursMins} from "../utils";
+
+const createFilmCardTemplate = (filmCard) => {
   const {filmName, poster, description, raiting, genre, comments, year, duration} = filmCard;
-  const yearCard = year.slice(-4);
+  const durations = resultHoursMins(duration);
   return `<article class="film-card">
   <h3 class="film-card__title">${filmName}</h3>
   <p class="film-card__rating">${raiting}</p>
   <p class="film-card__info">
-    <span class="film-card__year">${yearCard}</span>
-    <span class="film-card__duration">${duration}</span>
+    <span class="film-card__year">${new Date(year).getFullYear()}</span>
+    <span class="film-card__duration">${durations[0]}h ${durations[1]}m</span>
     <span class="film-card__genre">${genre[0]}</span>
   </p>
   <img src="./images/posters/${poster}" alt="" class="film-card__poster">
@@ -19,3 +21,27 @@ export const createFilmCardTemplate = (filmCard) => {
   </div>
 </article>`;
 };
+
+export default class FilmCard {
+  constructor(filmCard) {
+    this._element = null;
+    this._filmCard = filmCard;
+  }
+
+  getTemplate() {
+    return createFilmCardTemplate(this._filmCard);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+
+}

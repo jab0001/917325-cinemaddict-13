@@ -1,4 +1,5 @@
 import {firstLetterCaps} from '../utils';
+import {createElement} from "../utils";
 
 const createFilters = (filters) => {
   let result = ``;
@@ -12,7 +13,7 @@ const createFilters = (filters) => {
   return result;
 };
 
-export const createFilterTemplate = (filter) => {
+const createFilterTemplate = (filter) => {
   return `<nav class="main-navigation">
   <div class="main-navigation__items">
     ${createFilters(filter)}
@@ -20,3 +21,27 @@ export const createFilterTemplate = (filter) => {
   <a href="#stats" class="main-navigation__additional">Stats</a>
 </nav>`;
 };
+
+export default class FilmList {
+  constructor(filter) {
+    this._element = null;
+    this._filter = filter;
+  }
+
+  getTemplate() {
+    return createFilterTemplate(this._filter);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+
+}
