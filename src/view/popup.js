@@ -9,24 +9,22 @@ const createGenres = (el) => {
   return result;
 };
 
-const createComments = (author, comment, emoji, commentDate) => {
+const createComments = (comments) => {
   let result = ``;
-  for (let x = 0; x < comment.length; x++) {
-    if (author[x] && comment[x] && emoji[x]) {
-      result += `<li class="film-details__comment">
+  for (let x = 0; x < comments.length; x++) {
+    result += `<li class="film-details__comment">
     <span class="film-details__comment-emoji">
-      <img src="./images/emoji/${emoji[x]}" width="55" height="55" alt="emoji-smile">
+      <img src="./images/emoji/${comments[x].emoji}" width="55" height="55" alt="emoji-smile">
     </span>
     <div>
-      <p class="film-details__comment-text">${comment[x]}</p>
+      <p class="film-details__comment-text">${comments[x].text}</p>
       <p class="film-details__comment-info">
-        <span class="film-details__comment-author">${author[x]}</span>
-        <span class="film-details__comment-day">${commentDate}</span>
+        <span class="film-details__comment-author">${comments[x].author}</span>
+        <span class="film-details__comment-day">${comments[x].commentDate}</span>
         <button class="film-details__comment-delete">Delete</button>
       </p>
     </div>
   </li>`;
-    }
   }
   return result;
 };
@@ -126,10 +124,10 @@ const createPopupTemplate = (filmCard) => {
 
     <div class="film-details__bottom-container">
       <section class="film-details__comments-wrap">
-        <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${comments.text.length}</span></h3>
+        <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${comments.length}</span></h3>
 
         <ul class="film-details__comments-list">
-          ${createComments(comments.author, comments.text, comments.emoji, comments.commentDate)}
+          ${createComments(comments)}
         </ul>
 
         <div class="film-details__new-comment">

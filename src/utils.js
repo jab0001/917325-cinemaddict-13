@@ -1,3 +1,5 @@
+import dayjs from "dayjs";
+
 export const getRandomInteger = (a = 0, b = 1) => {
   const lower = Math.ceil(Math.min(a, b));
   const upper = Math.floor(Math.max(a, b));
@@ -36,4 +38,25 @@ export const createElement = (template) => {
   newElement.innerHTML = template;
 
   return newElement.firstChild;
+};
+
+export const generateYear = (day, month, year, format) => {
+  const maxDaysGap = day;
+  const maxMonthGap = month;
+  const maxYearsGap = year;
+  const daysGap = getRandomInteger(-maxDaysGap, 1);
+  const monthGap = getRandomInteger(-maxMonthGap, 1);
+  const yearsGap = getRandomInteger(-maxYearsGap, 0);
+
+  return dayjs()
+    .add(daysGap, `day`)
+    .add(monthGap, `month`)
+    .add(yearsGap, `years`)
+    .format(format);
+};
+
+export const getRandomItem = (array) => {
+  const randomIndex = getRandomInteger(0, array.length - 1);
+
+  return array[randomIndex];
 };
