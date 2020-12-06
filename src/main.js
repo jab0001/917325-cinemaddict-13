@@ -101,7 +101,6 @@ render(siteBodyElement, new StatsView(rank).getElement(), RenderPosition.BEFOREE
 /* Popup */
 
 let filmDetailsElement;
-let closePopupButton;
 
 filmsList.setClickPopupHandler((film) => {
   filmDetailsElement = new PopupView(film);
@@ -109,18 +108,12 @@ filmsList.setClickPopupHandler((film) => {
   siteBodyElement.classList.add(`modal-open`);
   siteBodyElement.classList.add(`hide-overflow`);
 
-  closePopupButton = filmDetailsElement.getElement().querySelector(`.film-details__close-btn`);
-
-  closePopupButton.addEventListener(`click`, onClosePopupButtonClick);
+  filmDetailsElement.setCloseClickHandler(() => {
+    filmDetailsElement.getElement().remove();
+    siteBodyElement.classList.remove(`modal-open`);
+    siteBodyElement.classList.remove(`hide-overflow`);
+  });
 });
-
-const onClosePopupButtonClick = (event) => {
-  event.preventDefault();
-  filmDetailsElement.getElement().remove();
-  siteBodyElement.classList.remove(`modal-open`);
-  siteBodyElement.classList.remove(`hide-overflow`);
-  closePopupButton.removeEventListener(`click`, onClosePopupButtonClick);
-};
 
 siteBodyElement.addEventListener(`keydown`, (event) => {
   if (event.code === `Escape`) {

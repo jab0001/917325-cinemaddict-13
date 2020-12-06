@@ -167,20 +167,20 @@ export default class Popup extends FormulaicView {
     super();
     this._filmCard = filmCard;
 
-    this._editClickHandler = this._editClickHandler.bind(this);
+    this._closeClickHandler = this._closeClickHandler.bind(this);
   }
 
   getTemplate() {
     return createPopupTemplate(this._filmCard);
   }
 
-  _editClickHandler(evt) {
+  _closeClickHandler(evt) {
     evt.preventDefault();
-    this._callback.editClick();
+    this._callback.closeClick();
   }
 
-  setEditClickHandler(callback) {
-    this._callback.editClick = callback;
-    this.getElement().querySelector(`.card__btn--edit`).addEventListener(`click`, this._editClickHandler);
+  setCloseClickHandler(callback) {
+    this._callback.closeClick = callback;
+    this.getElement().querySelector(`.film-details__close-btn`).addEventListener(`click`, this._closeClickHandler);
   }
 }
