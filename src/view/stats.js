@@ -1,4 +1,4 @@
-import {createElement} from "../utils";
+import FormulaicView from "./formulaic";
 
 const createStatsTemplate = (rank) => {
   const {totalWatched, totalTime, userRank, genre} = rank;
@@ -50,25 +50,13 @@ const createStatsTemplate = (rank) => {
 </section>`;
 };
 
-export default class Stats {
+export default class Stats extends FormulaicView {
   constructor(rank) {
-    this._element = null;
+    super();
     this._rank = rank;
   }
 
   getTemplate() {
     return createStatsTemplate(this._rank);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

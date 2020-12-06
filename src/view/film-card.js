@@ -1,4 +1,5 @@
-import {createElement, resultHoursMins} from "../utils";
+import FormulaicView from "./formulaic";
+import {resultHoursMins} from "../utils";
 
 const createFilmCardTemplate = (filmCard) => {
   const {filmName, poster, description, raiting, genre, comments, year, duration, watched, watchList, favorite, id} = filmCard;
@@ -22,26 +23,13 @@ const createFilmCardTemplate = (filmCard) => {
 </article>`;
 };
 
-export default class FilmCard {
+export default class FilmCard extends FormulaicView {
   constructor(filmCard) {
-    this._element = null;
+    super();
     this._filmCard = filmCard;
   }
 
   getTemplate() {
     return createFilmCardTemplate(this._filmCard);
   }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
-  }
-
 }

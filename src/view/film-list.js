@@ -1,5 +1,4 @@
-
-import {createElement} from "../utils";
+import FormulaicView from "./formulaic";
 
 const createFilmListTemplate = () => {
   return `<section class="films">
@@ -13,25 +12,34 @@ const createFilmListTemplate = () => {
 </section>`;
 };
 
-export default class FilmList {
-  constructor() {
-    this._element = null;
+const getFilmById = (currentId, filmCards) => {
+  const result = filmCards.findIndex((x) => x.id === +currentId);
+  return filmCards[result];
+};
+
+export default class FilmList extends FormulaicView {
+  constructor(filmCards) {
+    super();
+    this._filmCards = filmCards;
+    this._clickPopupHandler = this._clickPopupHandler.bind(this);
   }
 
   getTemplate() {
     return createFilmListTemplate();
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
+  _clickPopupHandler(evt) {
+    evt.preventDefault();
+    if (evt.target.tagName !== `IMG`) {
+      return;
     }
-
-    return this._element;
+    const id = evt.target.closest(`.film-card`).getAttribute(`data-id`);
+    const film = getFilmById(id, this._filmCards);
+    this._callback.clickPopup(film);
   }
 
-  removeElement() {
-    this._element = null;
+  setClickPopupHandler(callback) {
+    this._callback.clickPopup = callback;
+    this.getElement().addEventListener(`click`, this._clickPopupHandler);
   }
-
 }

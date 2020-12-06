@@ -1,32 +1,29 @@
 import dayjs from "dayjs";
-import {createElement, resultHoursMins} from "../utils";
+import {resultHoursMins} from "../utils";
+import FormulaicView from "./formulaic";
 
 const createGenres = (el) => {
-  let result = ``;
-  for (let x = 0; x < el.length; x++) {
-    result += `<span class="film-details__genre">${el[x]}</span>`;
-  }
-  return result;
+  return el.map((item) => {
+    return `<span class="film-details__genre">${item}</span>`;
+  }).join(` `);
 };
 
 const createComments = (comments) => {
-  let result = ``;
-  for (let x = 0; x < comments.length; x++) {
-    result += `<li class="film-details__comment">
+  return comments.map((el) => {
+    return `<li class="film-details__comment">
     <span class="film-details__comment-emoji">
-      <img src="./images/emoji/${comments[x].emoji}" width="55" height="55" alt="emoji-smile">
+      <img src="./images/emoji/${el.emoji}" width="55" height="55" alt="emoji-smile">
     </span>
     <div>
-      <p class="film-details__comment-text">${comments[x].text}</p>
+      <p class="film-details__comment-text">${el.text}</p>
       <p class="film-details__comment-info">
-        <span class="film-details__comment-author">${comments[x].author}</span>
-        <span class="film-details__comment-day">${comments[x].commentDate}</span>
+        <span class="film-details__comment-author">${el.author}</span>
+        <span class="film-details__comment-day">${el.commentDate}</span>
         <button class="film-details__comment-delete">Delete</button>
       </p>
     </div>
   </li>`;
-  }
-  return result;
+  }).join(` `);
 };
 
 const createPopupTemplate = (filmCard) => {
@@ -165,25 +162,25 @@ const createPopupTemplate = (filmCard) => {
 </section>`;
 };
 
-export default class Popup {
+export default class Popup extends FormulaicView {
   constructor(filmCard) {
-    this._element = null;
+    super();
     this._filmCard = filmCard;
+
+    this._editClickHandler = this._editClickHandler.bind(this);
   }
 
   getTemplate() {
     return createPopupTemplate(this._filmCard);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
+  _editClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.editClick();
   }
 
-  removeElement() {
-    this._element = null;
+  setEditClickHandler(callback) {
+    this._callback.editClick = callback;
+    this.getElement().querySelector(`.card__btn--edit`).addEventListener(`click`, this._editClickHandler);
   }
 }

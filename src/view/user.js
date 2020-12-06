@@ -1,4 +1,4 @@
-import {createElement} from "../utils";
+import FormulaicView from "./formulaic";
 
 const createUserTemplate = () => {
   return `<section class="header__profile profile">
@@ -7,24 +7,8 @@ const createUserTemplate = () => {
 </section>`;
 };
 
-export default class UserTemplate {
-  constructor() {
-    this._element = null;
-  }
-
+export default class UserTemplate extends FormulaicView {
   getTemplate() {
     return createUserTemplate();
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

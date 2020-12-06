@@ -1,16 +1,10 @@
 import {firstLetterCaps} from '../utils';
-import {createElement} from "../utils";
+import FormulaicView from "./formulaic";
 
 const createFilters = (filters) => {
-  let result = ``;
-  for (let x = 0; x < filters.length; x++) {
-    if (filters[x].name === `all`) {
-      result += `<a href="#${filters[x].name}" class="main-navigation__item">${firstLetterCaps(filters[x].name)} movies </a>`;
-    } else {
-      result += `<a href="#${filters[x].name}" class="main-navigation__item">${firstLetterCaps(filters[x].name)} <span class="main-navigation__item-count">${filters[x].count}</span></a>`;
-    }
-  }
-  return result;
+  return filters.map((el) => {
+    return el.name === `all` ? `<a href="#${el.name}" class="main-navigation__item">${firstLetterCaps(el.name)} movies </a>` : `<a href="#${el.name}" class="main-navigation__item">${firstLetterCaps(el.name)} <span class="main-navigation__item-count">${el.count}</span></a>`;
+  }).join(` `);
 };
 
 const createFilterTemplate = (filter) => {
@@ -22,26 +16,13 @@ const createFilterTemplate = (filter) => {
 </nav>`;
 };
 
-export default class FilmList {
+export default class FilmList extends FormulaicView {
   constructor(filter) {
-    this._element = null;
+    super();
     this._filter = filter;
   }
 
   getTemplate() {
     return createFilterTemplate(this._filter);
   }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
-  }
-
 }

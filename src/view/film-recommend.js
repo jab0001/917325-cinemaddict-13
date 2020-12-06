@@ -1,4 +1,4 @@
-import {createElement} from "../utils";
+import FormulaicView from "./formulaic";
 
 
 const createFilmRecommend = (title) => {
@@ -10,26 +10,13 @@ const createFilmRecommend = (title) => {
 </section>`;
 };
 
-export default class FilmRecommend {
+export default class FilmRecommend extends FormulaicView {
   constructor(title) {
-    this._element = null;
+    super();
     this._title = title;
   }
 
   getTemplate() {
     return createFilmRecommend(this._title);
   }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
-  }
-
 }
