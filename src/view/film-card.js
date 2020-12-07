@@ -27,9 +27,20 @@ export default class FilmCard extends FormulaicView {
   constructor(filmCard) {
     super();
     this._filmCard = filmCard;
+    this._clickPopupHandler = this._clickPopupHandler.bind(this);
   }
 
   getTemplate() {
     return createFilmCardTemplate(this._filmCard);
+  }
+
+  _clickPopupHandler(evt) {
+    evt.preventDefault();
+    this._callback.clickPopup(this._filmCard);
+  }
+
+  setClickPopupHandler(callback) {
+    this._callback.clickPopup = callback;
+    this.getElement().querySelector(`.film-card__poster`).addEventListener(`click`, this._clickPopupHandler);
   }
 }
