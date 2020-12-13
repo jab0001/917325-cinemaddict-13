@@ -109,7 +109,7 @@ export default class Films {
   _hadleFilmChange(updateFilm) {
     this._filmCards = updateItem(this._filmCards, updateFilm);
     if (this._filmPresenter[updateFilm.id]) {
-      this._filmPresenter[updateFilm.id].filmInit(updateFilm);
+      this._filmPresenter[updateFilm.id].init(updateFilm);
     }
   }
 
