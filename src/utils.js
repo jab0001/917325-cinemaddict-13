@@ -1,4 +1,5 @@
 import dayjs from "dayjs";
+import Formulaic from "./view/formulaic";
 
 export const getRandomInteger = (a = 0, b = 1) => {
   const lower = Math.ceil(Math.min(a, b));
@@ -22,13 +23,21 @@ export const RenderPosition = {
   BEFOREEND: `beforeend`
 };
 
-export const render = (container, element, place) => {
+export const render = (container, child, place) => {
+  if (container instanceof Formulaic) {
+    container = container.getElement();
+  }
+
+  if (child instanceof Formulaic) {
+    child = child.getElement();
+  }
+
   switch (place) {
-    case RenderPosition.AFTER:
-      container.after(element);
+    case RenderPosition.AFTERBEGIN:
+      container.prepend(child);
       break;
     case RenderPosition.BEFOREEND:
-      container.append(element);
+      container.append(child);
       break;
   }
 };
@@ -59,4 +68,45 @@ export const getRandomItem = (array) => {
   const randomIndex = getRandomInteger(0, array.length - 1);
 
   return array[randomIndex];
+};
+
+export const remove = (component) => {
+  if (!(component instanceof Formulaic)) {
+    throw new Error(`Can remove only components`);
+  }
+
+  component.getElement().remove();
+  component.removeElement();
+};
+
+export const replace = (newChild, oldChild) => {
+  if (oldChild instanceof Formulaic) {
+    oldChild = oldChild.getElement();
+  }
+
+  if (newChild instanceof Formulaic) {
+    newChild = newChild.getElement();
+  }
+
+  const parent = oldChild.parentElement;
+
+  if (parent === null || oldChild === null || newChild === null) {
+    throw new Error(`Can't replace unexisting elements`);
+  }
+
+  parent.replaceChild(newChild, oldChild);
+};
+
+export const updateItem = (items, update) => {
+  const index = items.findIndex((item) => item.id === update.id);
+
+  if (index === -1) {
+    return items;
+  }
+
+  return [
+    ...items.slice(0, index),
+    update,
+    ...items.slice(index + 1)
+  ];
 };
