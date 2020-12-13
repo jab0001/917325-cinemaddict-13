@@ -46,9 +46,9 @@ export default class Film {
     bodyElement.classList.add(`hide-overflow`);
     bodyElement.appendChild(this._popup.getElement());
     this._popup.setCloseClickHandler(this._onClosePopup);
-    this._filmComponent.setWatchedlistClickHandler(this._handlerWatchedlistClick);
-    this._filmComponent.setWatchlistClickHandler(this._handlerWatchlistClick);
-    this._filmComponent.setFavoriteClickHandler(this._handlerFavoriteClick);
+    this._popup.setWatchedlistClickHandler(this._handlerWatchedlistClick);
+    this._popup.setWatchlistClickHandler(this._handlerWatchlistClick);
+    this._popup.setFavoriteClickHandler(this._handlerFavoriteClick);
     document.addEventListener(`keydown`, this._onEscKeyDown);
   }
 
