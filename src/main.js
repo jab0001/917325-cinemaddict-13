@@ -29,40 +29,8 @@ filmsPresenter.init(filmCards);
 
 /* TotalFilms - footer */
 
-render(siteFooterElement, new TotalFilms(MAX_FILMS_CARDS).getElement(), RenderPosition.BEFOREEND);
+render(siteFooterElement, new TotalFilms(filmCards.length).getElement(), RenderPosition.BEFOREEND);
 
 /* StatsUser - header */
 
-render(siteBodyElement, new StatsView(rank).getElement(), RenderPosition.BEFOREEND); // stats
-
-/* Popup */
-
-/* let filmDetailsElement;
-
-const bindElem = () => {
-  filmCardsViews.forEach((elem) => {
-    elem.setClickPopupHandler((film) => {
-      filmDetailsElement = new PopupView(film);
-      render(siteBodyElement, filmDetailsElement.getElement(), RenderPosition.BEFOREEND);
-      siteBodyElement.classList.add(`modal-open`);
-      siteBodyElement.classList.add(`hide-overflow`);
-
-      filmDetailsElement.setCloseClickHandler(() => {
-        filmDetailsElement.getElement().remove();
-        siteBodyElement.classList.remove(`modal-open`);
-        siteBodyElement.classList.remove(`hide-overflow`);
-      });
-    });
-  });
-};
-bindElem();
-
-
-siteBodyElement.addEventListener(`keydown`, (event) => {
-  if (event.code === `Escape`) {
-    event.preventDefault();
-    filmDetailsElement.getElement().remove();
-    siteBodyElement.classList.remove(`modal-open`);
-    siteBodyElement.classList.remove(`hide-overflow`);
-  }
-}); */
+render(siteBodyElement, new StatsView(rank).getElement(), RenderPosition.BEFOREEND);

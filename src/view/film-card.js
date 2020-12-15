@@ -2,11 +2,11 @@ import FormulaicView from "./formulaic";
 import {resultHoursMins} from "../utils";
 
 const createFilmCardTemplate = (filmCard) => {
-  const {filmName, poster, description, raiting, genre, comments, year, duration, watched, watchList, favorite, id} = filmCard;
+  const {filmName, poster, description, rating, genre, comments, year, duration, watched, watchList, favorite, id} = filmCard;
   const durations = resultHoursMins(duration);
   return `<article class="film-card" data-id=${id}>
   <h3 class="film-card__title">${filmName}</h3>
-  <p class="film-card__rating">${raiting}</p>
+  <p class="film-card__rating">${rating}</p>
   <p class="film-card__info">
     <span class="film-card__year">${new Date(year).getFullYear()}</span>
     <span class="film-card__duration">${durations[0]}h ${durations[1]}m</span>

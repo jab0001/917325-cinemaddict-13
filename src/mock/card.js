@@ -54,7 +54,7 @@ export const generateFilmCard = () => {
     filmName: getRandomItem(FILM_NAMES),
     poster: getRandomItem(POSTERS),
     description: generateDiscription(),
-    raiting: getRandomInteger(0, 8),
+    rating: getRandomInteger(0, 8),
     ageLimit: getRandomItem(AGE_LIMITS),
     year: generateYear(30, 12, 60),
     duration: getRandomInteger(0, 239),
