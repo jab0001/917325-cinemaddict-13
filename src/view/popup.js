@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 import {resultHoursMins} from "../utils";
-import FormulaicView from "./formulaic";
+import SmartView from "./smart";
 
 const createGenres = (el) => {
   return el.map((item) => {
@@ -12,7 +12,7 @@ const createComments = (comments) => {
   return comments.map((el) => {
     return `<li class="film-details__comment">
     <span class="film-details__comment-emoji">
-      <img src="./images/emoji/${el.emoji}" width="55" height="55" alt="emoji-smile">
+      <img src="./images/emoji/${el.emoji.replace(/(.+)\/(.+)$/, `$2`)}" width="55" height="55" alt="emoji-smile">
     </span>
     <div>
       <p class="film-details__comment-text">${el.text}</p>
@@ -26,7 +26,7 @@ const createComments = (comments) => {
   }).join(` `);
 };
 
-const createPopupTemplate = (filmCard) => {
+const createPopupTemplate = (data) => {
   const {
     poster,
     filmName,
@@ -43,9 +43,22 @@ const createPopupTemplate = (filmCard) => {
     country,
     watchList,
     watched,
-    favorite
-  } = filmCard;
+    favorite,
+    emoji,
+    text
+  } = data;
   const durations = resultHoursMins(duration);
+
+  const renderEmogi = (emogi) => {
+    const result = emogi ?
+      `<span><img src="${emogi.src}" width="55" height="55" alt="${emogi}"></span>` : ``;
+    return result;
+  };
+
+  const renderText = (message) => {
+    const result = message ? `${data.message}` : ``;
+    return result;
+  };
 
   return `<section class="film-details">
   <form class="film-details__inner" action="" method="get">
@@ -127,14 +140,14 @@ const createPopupTemplate = (filmCard) => {
         <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${comments.length}</span></h3>
 
         <ul class="film-details__comments-list">
-          ${createComments(comments)}
+        ${createComments(comments)}
         </ul>
 
         <div class="film-details__new-comment">
-          <div class="film-details__add-emoji-label"></div>
+          <div class="film-details__add-emoji-label">${renderEmogi(emoji)}</div>
 
           <label class="film-details__comment-label">
-            <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"></textarea>
+            <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${renderText(text)}</textarea>
           </label>
 
           <div class="film-details__emoji-list">
@@ -165,20 +178,78 @@ const createPopupTemplate = (filmCard) => {
 </section>`;
 };
 
-export default class Popup extends FormulaicView {
-  constructor(filmCard) {
+export default class Popup extends SmartView {
+  constructor(film) {
     super();
-    this._filmCard = filmCard;
+    this._data = film;
 
     this._closeClickHandler = this._closeClickHandler.bind(this);
-
     this._onWatchedlistClick = this._onWatchedlistClick.bind(this);
     this._onWatchlistClick = this._onWatchlistClick.bind(this);
     this._onFavoriteClick = this._onFavoriteClick.bind(this);
+    this._messageToggleHandler = this._messageToggleHandler.bind(this);
+
+    this._messageInputHandler = this._messageInputHandler.bind(this);
+    this._smileChangeHandler = this._smileChangeHandler.bind(this);
+    this._setInnerHandlers();
   }
 
   getTemplate() {
-    return createPopupTemplate(this._filmCard);
+    return createPopupTemplate(this._data);
+  }
+
+  restoreHandlers() {
+    this._setInnerHandlers();
+    this.setCloseClickHandler(this._callback.closeClick);
+    this.setFavoriteClickHandler(this._callback.favoriteClick);
+    this.setWatchlistClickHandler(this._callback.watchlistClick);
+    this.setWatchedlistClickHandler(this._callback.watchedlistClick);
+  }
+
+  _setInnerHandlers() {
+    this.getElement().querySelectorAll(`.film-details__emoji-label`)
+    .forEach((item) => item.addEventListener(`click`, this._smileChangeHandler));
+    this.getElement().querySelector(`.film-details__comment-input`).addEventListener(`input`, this._messageInputHandler);
+    document.addEventListener(`keydown`, this._messageToggleHandler);
+  }
+
+  _messageInputHandler(evt) {
+    evt.preventDefault();
+    this.updateData({
+      text: evt.target.value
+    }, true);
+  }
+
+  _smileChangeHandler(evt) {
+    evt.preventDefault();
+    this.updateData({
+      emoji: {
+        src: evt.target.src
+      }
+    }
+    );
+  }
+
+  _messageToggleHandler(evt) {
+    this._emoji = this._data.emoji ? this._data.emoji.src : ``;
+    this._text = this._data.text ? this._data.text : ``;
+    if (evt.key === `Enter`) {
+      if (this._text === `` && this._emoji === ``) {
+        return;
+      }
+      const newComment = {
+        text: this._text,
+        emoji: this._emoji,
+        commentDate: dayjs().format(`YYYY/MM/DD HH:MM`),
+        author: `Anonymous`
+      };
+      document.removeEventListener(`keydown`, this._messageToggleHandler);
+      this.updateData({
+        comments: [...this._data.comments, newComment]
+      });
+    }
+    /* console.log(this._data); */
+
   }
 
   _closeClickHandler(evt) {
