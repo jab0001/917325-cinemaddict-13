@@ -12,7 +12,7 @@ const createComments = (comments) => {
   return comments.map((el) => {
     return `<li class="film-details__comment">
     <span class="film-details__comment-emoji">
-      <img src="./images/emoji/${el.emoji.replace(/(.+)\/(.+)$/, `$2`)}" width="55" height="55" alt="emoji-smile">
+      <img src="./images/emoji/${el.emoji}" width="55" height="55" alt="emoji-smile">
     </span>
     <div>
       <p class="film-details__comment-text">${el.text}</p>
@@ -51,12 +51,12 @@ const createPopupTemplate = (data) => {
 
   const renderEmogi = (emogi) => {
     const result = emogi ?
-      `<span><img src="${emogi.src}" width="55" height="55" alt="${emogi}"></span>` : ``;
+      `<span><img src="./images/emoji/${emogi}" width="55" height="55" alt="${emogi}"></span>` : ``;
     return result;
   };
 
   const renderText = (message) => {
-    const result = message ? `${data.message}` : ``;
+    const result = message ? `${message}` : ``;
     return result;
   };
 
@@ -223,15 +223,13 @@ export default class Popup extends SmartView {
   _smileChangeHandler(evt) {
     evt.preventDefault();
     this.updateData({
-      emoji: {
-        src: evt.target.src
-      }
+      emoji: evt.target.src.replace(/(.+)\/(.+)$/, `$2`)
     }
     );
   }
 
   _messageToggleHandler(evt) {
-    this._emoji = this._data.emoji ? this._data.emoji.src : ``;
+    this._emoji = this._data.emoji ? this._data.emoji : ``;
     this._text = this._data.text ? this._data.text : ``;
     if (evt.key === `Enter`) {
       if (this._text === `` && this._emoji === ``) {
@@ -243,6 +241,8 @@ export default class Popup extends SmartView {
         commentDate: dayjs().format(`YYYY/MM/DD HH:MM`),
         author: `Anonymous`
       };
+      delete this._data.text;
+      delete this._data.emoji;
       document.removeEventListener(`keydown`, this._messageToggleHandler);
       this.updateData({
         comments: [...this._data.comments, newComment]
