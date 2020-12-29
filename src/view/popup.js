@@ -1,6 +1,9 @@
 import dayjs from "dayjs";
-import {resultHoursMins} from "../utils";
+import durations from 'dayjs/plugin/duration';
+/* import {resultHoursMins} from "../utils"; */
 import SmartView from "./smart";
+
+dayjs.extend(durations);
 
 const createGenres = (el) => {
   return el.map((item) => {
@@ -12,7 +15,7 @@ const createComments = (comments) => {
   return comments.map((el) => {
     return `<li class="film-details__comment">
     <span class="film-details__comment-emoji">
-      <img src="./images/emoji/${el.emoji}" width="55" height="55" alt="emoji-smile">
+      <img src="./images/emoji/${el.emoji}" width="55" height="55" alt="${el.emoji ? el.emoji : `no imoji`}">
     </span>
     <div>
       <p class="film-details__comment-text">${el.text}</p>
@@ -26,7 +29,7 @@ const createComments = (comments) => {
   }).join(` `);
 };
 
-const createPopupTemplate = (data) => {
+const createPopupTemplate = (data, text, emoji) => {
   const {
     poster,
     filmName,
@@ -43,11 +46,9 @@ const createPopupTemplate = (data) => {
     country,
     watchList,
     watched,
-    favorite,
-    emoji,
-    text
+    favorite
   } = data;
-  const durations = resultHoursMins(duration);
+  /* const durations = resultHoursMins(duration); */
 
   const renderEmogi = (emogi) => {
     const result = emogi ?
@@ -60,6 +61,8 @@ const createPopupTemplate = (data) => {
     return result;
   };
 
+  const getDuration = dayjs.duration(duration, `minutes`);
+
   return `<section class="film-details">
   <form class="film-details__inner" action="" method="get">
     <div class="film-details__top-container">
@@ -68,7 +71,7 @@ const createPopupTemplate = (data) => {
       </div>
       <div class="film-details__info-wrap">
         <div class="film-details__poster">
-          <img class="film-details__poster-img" src="./images/posters/${poster}" alt="">
+          <img class="film-details__poster-img" src="./images/posters/${poster}" alt="${poster.replace(/\.[^.]+$/, ``)}">
 
           <p class="film-details__age">${ageLimit}</p>
         </div>
@@ -104,7 +107,7 @@ const createPopupTemplate = (data) => {
             </tr>
             <tr class="film-details__row">
               <td class="film-details__term">Runtime</td>
-              <td class="film-details__cell">${durations[0]}h ${durations[1]}m</td>
+              <td class="film-details__cell">${getDuration.hours()}h ${getDuration.minutes()}m</td>
             </tr>
             <tr class="film-details__row">
               <td class="film-details__term">Country</td>
@@ -182,6 +185,8 @@ export default class Popup extends SmartView {
   constructor(film) {
     super();
     this._data = film;
+    this._text = ``;
+    this._emoji = ``;
 
     this._closeClickHandler = this._closeClickHandler.bind(this);
     this._onWatchedlistClick = this._onWatchedlistClick.bind(this);
@@ -195,7 +200,7 @@ export default class Popup extends SmartView {
   }
 
   getTemplate() {
-    return createPopupTemplate(this._data);
+    return createPopupTemplate(this._data, this._text, this._emoji);
   }
 
   restoreHandlers() {
@@ -207,7 +212,7 @@ export default class Popup extends SmartView {
   }
 
   _setInnerHandlers() {
-    this.getElement().querySelectorAll(`.film-details__emoji-label`)
+    this.getElement().querySelectorAll(`.film-details__emoji-label img`)
     .forEach((item) => item.addEventListener(`click`, this._smileChangeHandler));
     this.getElement().querySelector(`.film-details__comment-input`).addEventListener(`input`, this._messageInputHandler);
     document.addEventListener(`keydown`, this._messageToggleHandler);
@@ -215,34 +220,25 @@ export default class Popup extends SmartView {
 
   _messageInputHandler(evt) {
     evt.preventDefault();
-    this.updateData({
-      text: evt.target.value
-    }, true);
+    this._text = evt.target.value;
   }
 
   _smileChangeHandler(evt) {
     evt.preventDefault();
-    this.updateData({
-      emoji: evt.target.src.replace(/(.+)\/(.+)$/, `$2`)
-    }
-    );
+    this._emoji = evt.target.src.replace(/(.+)\/(.+)$/, `$2`);
+    this.updateData(this._data);
   }
 
   _messageToggleHandler(evt) {
-    this._emoji = this._data.emoji ? this._data.emoji : ``;
-    this._text = this._data.text ? this._data.text : ``;
+    this._currentEmoji = this._emoji ? this._emoji : ``;
+    this._currentText = this._text ? this._text : ``;
     if (evt.key === `Enter`) {
-      if (this._text === `` && this._emoji === ``) {
-        return;
-      }
       const newComment = {
-        text: this._text,
-        emoji: this._emoji,
-        commentDate: dayjs().format(`YYYY/MM/DD HH:MM`),
+        text: this._currentText,
+        emoji: this._currentEmoji,
+        commentDate: dayjs().format(`YYYY/MM/DD HH:mm`),
         author: `Anonymous`
       };
-      delete this._data.text;
-      delete this._data.emoji;
       document.removeEventListener(`keydown`, this._messageToggleHandler);
       this.updateData({
         comments: [...this._data.comments, newComment]
