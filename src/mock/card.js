@@ -1,4 +1,4 @@
-import {getRandomInteger, generateYear, getRandomItem} from "../utils";
+import {getRandomInteger, generateYear, getRandomItem} from "../utils/utils";
 import {generateComments} from "./comments";
 
 const FILM_NAMES = [

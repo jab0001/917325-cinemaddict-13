@@ -1,4 +1,4 @@
-import {createElement} from "../utils";
+import {createElement} from "../utils/utils";
 
 export default class Formulaic {
   constructor() {

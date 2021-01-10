@@ -1,4 +1,4 @@
-import {resultHoursMins} from "../utils";
+import {resultHoursMins} from "../utils/utils";
 
 const summaryWatched = (array) => {
   const index = array.filter((el) => el.name === `history`);

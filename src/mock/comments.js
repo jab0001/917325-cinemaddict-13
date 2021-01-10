@@ -1,4 +1,4 @@
-import {getRandomItem, generateYear} from "../utils";
+import {getRandomItem, generateYear} from "../utils/utils";
 
 
 const EMOJI = [`angry.png`, `puke.png`, `sleeping.png`, `smile.png`];

@@ -1,5 +1,5 @@
 import FormulaicView from "./formulaic";
-import {Sort} from "../utils";
+import {Sort} from "../utils/utils";
 
 const createSortTemplate = () => {
   return `<ul class="sort">

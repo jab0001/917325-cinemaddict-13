@@ -1,11 +1,11 @@
 import FilmCard from "../view/film-card.js";
 import Popup from "../view/popup.js";
 
-import {render, RenderPosition, remove, replace} from "../utils.js";
+import {render, RenderPosition, remove, replace, UserAction, UpdateType} from "../utils/utils.js";
 
 const bodyElement = document.querySelector(`body`);
 
-export default class Film {
+export default class FilmPresenter {
   constructor(changeData, viewChange, container) {
     this._filmListElement = container;
     this._changeData = changeData;
@@ -79,6 +79,8 @@ export default class Film {
 
   _handlerFavoriteClick() {
     this._changeData(
+        UserAction.UPDATE_MOVIE,
+        UpdateType.MINOR,
         Object.assign(
             {},
             this._film,
@@ -92,6 +94,8 @@ export default class Film {
 
   _handlerWatchlistClick() {
     this._changeData(
+        UserAction.UPDATE_MOVIE,
+        UpdateType.MINOR,
         Object.assign(
             {},
             this._film,
@@ -104,6 +108,8 @@ export default class Film {
 
   _handlerWatchedlistClick() {
     this._changeData(
+        UserAction.UPDATE_MOVIE,
+        UpdateType.MINOR,
         Object.assign(
             {},
             this._film,

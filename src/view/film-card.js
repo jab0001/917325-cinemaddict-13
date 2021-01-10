@@ -1,5 +1,5 @@
 import FormulaicView from "./formulaic";
-import {resultHoursMins} from "../utils";
+import {resultHoursMins} from "../utils/utils";
 
 const createFilmCardTemplate = (filmCard) => {
   const {filmName, poster, description, rating, genre, comments, year, duration, watched, watchList, favorite, id} = filmCard;
