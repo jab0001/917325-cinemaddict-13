@@ -4,7 +4,7 @@ import FilmCardView from "../view/film-card";
 import MoreButtonView from "../view/more-button";
 import FilmRecommendView from "../view/film-recommend";
 import EmptyFilmsView from "../view/empty-films";
-import {render, RenderPosition, remove, Sort, UserAction, UpdateType} from "../utils/utils";
+import {render, RenderPosition, remove, Sort, UserAction, UpdateType, replace} from "../utils/utils";
 import FilmPresenter from "./film-presenter";
 import dayjs from "dayjs";
 import {filter} from "../utils/filter";
@@ -19,7 +19,7 @@ export default class FilmsPresenter {
     this._filmsModel = filmsModel;
     this._filterModel = filterModel;
 
-    this._sortComponent = new SortView();
+    this._sortComponent = null;
     this._filmListComponent = new FilmListView();
     this._filmCardComponent = new FilmCardView();
     this._moreButtonComponent = new MoreButtonView();
@@ -86,8 +86,17 @@ export default class FilmsPresenter {
   }
 
   _renderSort() {
-    render(this._siteMainContainer, this._sortComponent, RenderPosition.BEFOREEND);
+    const prevSortComponent = this._sortComponent;
+    this._sortComponent = new SortView(this._currentSortType);
     this._sortComponent.setSortChangeHandler(this._handleSortChange);
+
+    if (prevSortComponent === null) {
+      render(this._siteMainContainer, this._sortComponent, RenderPosition.BEFOREEND);
+      return;
+    }
+
+    replace(this._sortComponent, prevSortComponent);
+    remove(prevSortComponent);
   }
 
   _renderFilm(block, film) {
@@ -235,6 +244,9 @@ export default class FilmsPresenter {
     }
 
     this._currentSortType = sort;
+    this._renderedMoviesCount = FILMS_COUNT;
+
+    this._renderSort();
     this._clearList();
     this._renderFilmList();
   }
