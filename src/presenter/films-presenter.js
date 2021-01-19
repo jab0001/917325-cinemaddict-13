@@ -24,7 +24,11 @@ export default class FilmsPresenter {
     this._filmCardComponent = new FilmCardView();
     this._moreButtonComponent = new MoreButtonView();
     this._emptyFilmsComponent = new EmptyFilmsView();
-    this._filmRecommendComponent = new FilmRecommendView();
+    this._filmRecommendComponent = [];
+
+    for (let k = 0; k < RATED_COUNT; k++) {
+      this._filmRecommendComponent.push(new FilmRecommendView(TITLES[k]));
+    }
 
     this._filmPresenter = {};
     this._filmRecommendPresenter = {};
@@ -135,16 +139,17 @@ export default class FilmsPresenter {
   }
 
   _renderFilmRecommend(filmsElement) {
-    const films = this._getFilms();
+    const films = this._filmsModel.get();
     const topRatedFilms = [...films].sort((a, b) => a.rating < b.rating ? 1 : -1);
     const mostCommentFilms = [...films].sort((a, b) => a.comments.length < b.comments.length ? 1 : -1);
     const extraFilms = [topRatedFilms.slice(0, RATED_COUNT), mostCommentFilms.slice(0, RATED_COUNT)];
 
     for (let j = 0; j < RATED_COUNT; j++) {
-      const filmRecommend = new FilmRecommendView(TITLES[j]).getElement();
-      render(filmsElement, filmRecommend, RenderPosition.BEFOREEND);
+      /* const filmRecommend = new FilmRecommendView(TITLES[j]).getElement(); */
+      let filmer = this._filmRecommendComponent[j].getElement();
+      render(filmsElement, filmer, RenderPosition.BEFOREEND);
 
-      const filmExtra = filmRecommend.querySelector(`.films-list__container`);
+      const filmExtra = filmer.querySelector(`.films-list__container`);
 
       for (let film of extraFilms[j]) {
         this._renderFilmsRecommend(filmExtra, film);
@@ -176,13 +181,11 @@ export default class FilmsPresenter {
         break;
       }
       case UpdateType.MINOR: {
-        this._clearBoard();
-        this._renderMain(this._siteMainContainer);
+        this._rerenderMain();
         break;
       }
       case UpdateType.MAJOR: {
-        this._clearBoard(true, true);
-        this._renderMain(this._siteMainContainer);
+        this._rerenderMain(true, true);
         break;
       }
     }
@@ -229,10 +232,9 @@ export default class FilmsPresenter {
       .values(this._filmRecommendPresenter)
       .forEach((presenter) => presenter.destroy());
     this._filmRecommendPresenter = {};
-    remove(this._filmRecommendComponent);
   }
 
-  _clearBoard(resetRenderedFilmsCount = false, resetSort = false) {
+  _rerenderMain(resetRenderedFilmsCount = false, resetSort = false) {
     this._clearList();
     this._clearRecommendList();
 
@@ -245,5 +247,7 @@ export default class FilmsPresenter {
     if (resetSort) {
       this._currentSortType = Sort.DEFAULT;
     }
+
+    this._renderMain(this._siteMainContainer);
   }
 }
