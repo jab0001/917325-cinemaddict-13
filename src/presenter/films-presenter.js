@@ -24,6 +24,7 @@ export default class FilmsPresenter {
     this._filmCardComponent = new FilmCardView();
     this._moreButtonComponent = new MoreButtonView();
     this._emptyFilmsComponent = new EmptyFilmsView();
+    this._recommendContainer = [];
     this._filmRecommendComponent = [];
 
     for (let k = 0; k < RATED_COUNT; k++) {
@@ -31,7 +32,8 @@ export default class FilmsPresenter {
     }
 
     this._filmPresenter = {};
-    this._filmRecommendPresenter = {};
+    this._filmRecommendPresenterComments = {};
+    this._filmRecommendPresenterRated = {};
 
     this._handleViewAction = this._handleViewAction.bind(this);
     this._handleModelEvent = this._handleModelEvent.bind(this);
@@ -78,7 +80,9 @@ export default class FilmsPresenter {
     }
     this._renderSort();
     this._renderFilmList();
-    this._renderFilmRecommend(this._filmsElement);
+    this._renderFilmRecommendContainer(this._filmsElement);
+    this._renderFilmRecommendComments();
+    this._renderFilmRecommendRated();
   }
 
   _renderSort() {
@@ -92,10 +96,16 @@ export default class FilmsPresenter {
     this._filmPresenter[film.id] = renderFilmPresenter;
   }
 
-  _renderFilmsRecommend(block, film) {
+  _renderFilmsRecommendComments(block, film) {
     const renderFilmPresenter = new FilmPresenter(this._handleViewAction, this._setDefaultView, block);
     renderFilmPresenter.init(film);
-    this._filmRecommendPresenter[film.id] = renderFilmPresenter;
+    this._filmRecommendPresenterComments[film.id] = renderFilmPresenter;
+  }
+
+  _renderFilmsRecommendRated(block, film) {
+    const renderFilmPresenter = new FilmPresenter(this._handleViewAction, this._setDefaultView, block);
+    renderFilmPresenter.init(film);
+    this._filmRecommendPresenterRated[film.id] = renderFilmPresenter;
   }
 
   _renderFilmList() {
@@ -138,23 +148,30 @@ export default class FilmsPresenter {
     });
   }
 
-  _renderFilmRecommend(filmsElement) {
-    const films = this._filmsModel.get();
-    const topRatedFilms = [...films].sort((a, b) => a.rating < b.rating ? 1 : -1);
-    const mostCommentFilms = [...films].sort((a, b) => a.comments.length < b.comments.length ? 1 : -1);
-    const extraFilms = [topRatedFilms.slice(0, RATED_COUNT), mostCommentFilms.slice(0, RATED_COUNT)];
-
+  _renderFilmRecommendContainer(filmsElement) {
     for (let j = 0; j < RATED_COUNT; j++) {
-      /* const filmRecommend = new FilmRecommendView(TITLES[j]).getElement(); */
       let filmer = this._filmRecommendComponent[j].getElement();
       render(filmsElement, filmer, RenderPosition.BEFOREEND);
-
-      const filmExtra = filmer.querySelector(`.films-list__container`);
-
-      for (let film of extraFilms[j]) {
-        this._renderFilmsRecommend(filmExtra, film);
-      }
+      this._recommendContainer.push(filmer.querySelector(`.films-list__container`));
     }
+  }
+
+  _renderFilmRecommendComments() {
+    const films = this._filmsModel.get();
+    const topRatedFilms = [...films].sort((a, b) => a.rating < b.rating ? 1 : -1).slice(0, RATED_COUNT);
+
+    topRatedFilms.forEach((film) => {
+      this._renderFilmsRecommendComments(this._recommendContainer[0], film);
+    });
+  }
+
+  _renderFilmRecommendRated() {
+    const films = this._filmsModel.get();
+    const mostCommentFilms = [...films].sort((a, b) => a.comments.length < b.comments.length ? 1 : -1).slice(0, RATED_COUNT);
+
+    mostCommentFilms.forEach((film) => {
+      this._renderFilmsRecommendRated(this._recommendContainer[1], film);
+    });
   }
 
   _handleViewAction(actionType, updateType, update) {
@@ -195,8 +212,11 @@ export default class FilmsPresenter {
     if (this._filmPresenter[updateFilm.id]) {
       this._filmPresenter[updateFilm.id].init(updateFilm);
     }
-    if (this._filmRecommendPresenter[updateFilm.id]) {
-      this._filmRecommendPresenter[updateFilm.id].init(updateFilm);
+    if (this._filmRecommendPresenterComments[updateFilm.id]) {
+      this._filmRecommendPresenterComments[updateFilm.id].init(updateFilm);
+    }
+    if (this._filmRecommendPresenterRated[updateFilm.id]) {
+      this._filmRecommendPresenterRated[updateFilm.id].init(updateFilm);
     }
   }
 
@@ -227,16 +247,24 @@ export default class FilmsPresenter {
     remove(this._moreButtonComponent);
   }
 
-  _clearRecommendList() {
+  _clearRecommendListComments() {
     Object
-      .values(this._filmRecommendPresenter)
+      .values(this._filmRecommendPresenterComments)
       .forEach((presenter) => presenter.destroy());
-    this._filmRecommendPresenter = {};
+    this._filmRecommendPresenterComments = {};
+  }
+
+  _clearRecommendListRated() {
+    Object
+      .values(this._filmRecommendPresenterRated)
+      .forEach((presenter) => presenter.destroy());
+    this._filmRecommendPresenterRated = {};
   }
 
   _rerenderMain(resetRenderedFilmsCount = false, resetSort = false) {
     this._clearList();
-    this._clearRecommendList();
+    this._clearRecommendListComments();
+    this._clearRecommendListRated();
 
     if (resetRenderedFilmsCount) {
       this._renderedFilmCount = FILMS_COUNT;
