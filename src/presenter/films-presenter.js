@@ -100,19 +100,19 @@ export default class FilmsPresenter {
   }
 
   _renderFilm(block, film) {
-    const renderFilmPresenter = new FilmPresenter(this._handleViewAction, this._setDefaultView, block);
+    const renderFilmPresenter = new FilmPresenter(this._handleViewAction, this._setDefaultView, block, this._filmsModel);
     renderFilmPresenter.init(film);
     this._filmPresenter[film.id] = renderFilmPresenter;
   }
 
   _renderFilmsRecommendComments(block, film) {
-    const renderFilmPresenter = new FilmPresenter(this._handleViewAction, this._setDefaultView, block);
+    const renderFilmPresenter = new FilmPresenter(this._handleViewAction, this._setDefaultView, block, this._filmsModel);
     renderFilmPresenter.init(film);
     this._filmRecommendPresenterComments[film.id] = renderFilmPresenter;
   }
 
   _renderFilmsRecommendRated(block, film) {
-    const renderFilmPresenter = new FilmPresenter(this._handleViewAction, this._setDefaultView, block);
+    const renderFilmPresenter = new FilmPresenter(this._handleViewAction, this._setDefaultView, block, this._filmsModel);
     renderFilmPresenter.init(film);
     this._filmRecommendPresenterRated[film.id] = renderFilmPresenter;
   }
@@ -189,12 +189,12 @@ export default class FilmsPresenter {
         this._filmsModel.update(updateType, update);
         break;
       }
-      case UserAction.DELETE_COMMENT: {
-        this._filmsModel.update(updateType, update);
+      case UserAction.ADD_COMMENT: {
+        this._filmsModel.addComment(updateType, update);
         break;
       }
-      case UserAction.ADD_COMMENT: {
-        this._filmsModel.update(updateType, update);
+      case UserAction.DELETE_COMMENT: {
+        this._filmsModel.deleteComment(updateType, update);
         break;
       }
     }
@@ -233,7 +233,10 @@ export default class FilmsPresenter {
     Object.values(this._filmPresenter).forEach((presenter) => {
       presenter.closePopup();
     });
-    Object.values(this._filmRecommendPresenter).forEach((presenter) => {
+    Object.values(this._filmRecommendPresenterRated).forEach((presenter) => {
+      presenter.closePopup();
+    });
+    Object.values(this._filmRecommendPresenterComments).forEach((presenter) => {
       presenter.closePopup();
     });
   }

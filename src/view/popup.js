@@ -2,6 +2,7 @@ import dayjs from "dayjs";
 import durations from 'dayjs/plugin/duration';
 /* import {resultHoursMins} from "../utils"; */
 import SmartView from "./smart";
+import {UserAction, UpdateType} from "../utils/utils";
 
 dayjs.extend(durations);
 
@@ -22,7 +23,7 @@ const createComments = (comments) => {
       <p class="film-details__comment-info">
         <span class="film-details__comment-author">${el.author}</span>
         <span class="film-details__comment-day">${el.commentDate}</span>
-        <button class="film-details__comment-delete">Delete</button>
+        <button id="${el.id}" class="film-details__comment-delete">Delete</button>
       </p>
     </div>
   </li>`;
@@ -182,9 +183,10 @@ const createPopupTemplate = (data, text, emoji) => {
 };
 
 export default class Popup extends SmartView {
-  constructor(film) {
+  constructor(film, films) {
     super();
     this._data = film;
+    this._filmsModel = films;
     this._text = ``;
     this._emoji = ``;
 
@@ -193,10 +195,24 @@ export default class Popup extends SmartView {
     this._onWatchlistClick = this._onWatchlistClick.bind(this);
     this._onFavoriteClick = this._onFavoriteClick.bind(this);
     this._messageToggleHandler = this._messageToggleHandler.bind(this);
-
     this._messageInputHandler = this._messageInputHandler.bind(this);
     this._smileChangeHandler = this._smileChangeHandler.bind(this);
+    this._onDeleteMessageClick = this._onDeleteMessageClick.bind(this);
     this._setInnerHandlers();
+  }
+
+  _handleViewActionFilm(actionType, updateType, update) {
+    switch (actionType) {
+      case UserAction.UPDATE_MOVIE:
+        this._filmsModel.update(updateType, update);
+        break;
+      case UserAction.ADD_COMMENT:
+        this._filmsModel.addComment(updateType, update);
+        break;
+      case UserAction.DELETE_COMMENT:
+        this._filmsModel.deleteComment(updateType, update);
+        break;
+    }
   }
 
   getTemplate() {
@@ -215,6 +231,8 @@ export default class Popup extends SmartView {
     this.getElement().querySelectorAll(`.film-details__emoji-label img`)
     .forEach((item) => item.addEventListener(`click`, this._smileChangeHandler));
     this.getElement().querySelector(`.film-details__comment-input`).addEventListener(`input`, this._messageInputHandler);
+    this.getElement().querySelectorAll(`.film-details__comment-delete`)
+    .forEach((deleteButton) => deleteButton.addEventListener(`click`, this._onDeleteMessageClick));
     document.addEventListener(`keydown`, this._messageToggleHandler);
   }
 
@@ -234,18 +252,39 @@ export default class Popup extends SmartView {
     this._currentText = this._text ? this._text : ``;
     if (evt.key === `Enter`) {
       const newComment = {
+        id: Math.random(),
         text: this._currentText,
         emoji: this._currentEmoji,
         commentDate: dayjs().format(`YYYY/MM/DD HH:mm`),
         author: `Anonymous`
       };
+
       document.removeEventListener(`keydown`, this._messageToggleHandler);
       this.updateData({
         comments: [...this._data.comments, newComment]
       });
-    }
-    /* console.log(this._data); */
 
+      this._handleViewActionFilm(
+          UserAction.ADD_COMMENT,
+          UpdateType.MINOR,
+          this._data
+      );
+    }
+  }
+
+  _onDeleteMessageClick(evt) {
+    evt.preventDefault();
+    const indexToDelete = this._data.comments.findIndex((comment) => comment.id === +evt.target.id);
+    let newComments = this._data.comments;
+    newComments.splice(indexToDelete, 1);
+    this.updateData({
+      comments: newComments
+    });
+    this._handleViewActionFilm(
+        UserAction.DELETE_COMMENT,
+        UpdateType.MINOR,
+        this._data
+    );
   }
 
   _closeClickHandler(evt) {
@@ -262,6 +301,9 @@ export default class Popup extends SmartView {
   _onFavoriteClick(evt) {
     evt.preventDefault();
     this._callback.favoriteClick();
+    this.updateData({
+      favorite: !this._data.favorite
+    }, true);
   }
 
   setFavoriteClickHandler(callback) {
@@ -278,6 +320,9 @@ export default class Popup extends SmartView {
   _onWatchlistClick(evt) {
     evt.preventDefault();
     this._callback.watchlistClick();
+    this.updateData({
+      watchList: !this._data.watchList
+    }, true);
   }
 
   setWatchedlistClickHandler(callback) {
@@ -288,5 +333,8 @@ export default class Popup extends SmartView {
   _onWatchedlistClick(evt) {
     evt.preventDefault();
     this._callback.watchedlistClick();
+    this.updateData({
+      watched: !this._data.watched
+    }, true);
   }
 }

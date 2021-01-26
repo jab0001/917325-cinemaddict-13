@@ -8,6 +8,7 @@ const TEXT = [`hello`, `good`, `bad`, `good day`];
 
 const generateComment = () => {
   return {
+    id: Math.random(),
     emoji: getRandomItem(EMOJI),
     commentDate: generateYear(30, 12, 5, `YYYY/MM/DD HH:MM`),
     author: getRandomItem(AUTHOR),

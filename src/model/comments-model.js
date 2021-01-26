@@ -1,33 +1,23 @@
 import Observer from "../utils/observer";
 
-export default class Films extends Observer {
+export default class Comments extends Observer {
   constructor() {
     super();
-    this._films = [];
+    this._comments = {};
   }
 
-  set(films) {
-    this._films = films.slice();
-  }
-
-  get() {
-    return this._films;
-  }
-
-  update(updateType, update) {
-    const index = this._films.findIndex((card) => card.id === update.id);
-
-    if (index === -1) {
-      throw new Error(`Can't update unexisting movie`);
+  setComments(_comments) {
+    if (!_comments) {
+      return;
     }
+    this._comments = Object.assign(
+        {},
+        _comments
+    );
+  }
 
-    this._films = [
-      ...this._films.slice(0, index),
-      update,
-      ...this._films.slice(index + 1)
-    ];
-
-    this._notify(updateType, update);
+  getComments() {
+    return this._comments;
   }
 
   addComment(updateType, update) {
@@ -58,14 +48,5 @@ export default class Films extends Observer {
       ...this._films.slice(index + 1)
     ];
     this._notify(updateType, update);
-  }
-
-  getFilm(id) {
-    const index = this._films.findIndex((film) => film.id === id);
-
-    if (index === -1) {
-      throw new Error(`Can't find an unexisting film`);
-    }
-    return this._films[index];
   }
 }
